@@ -7,6 +7,11 @@ app.use(express.json()); // Parse JSON bodies
 let todos = [
   { id: 1, task: 'Learn Node.js', completed: false },
   { id: 2, task: 'Build CRUD API', completed: false },
+  { id: 3, task: 'Test API', completed: true },
+  { id: 4, task: 'Deploy to Heroku', completed: false },
+  {id: 5, task: 'Celebrate!', completed: true },
+  {id: 6, task: 'Review code', completed: false },
+  {id: 7, task: 'Write documentation', completed: true }
 ];
 
 
@@ -16,9 +21,30 @@ app.get('/todos', (req, res) => {
 });
 
 
+// QUESTION 3 : GET ONLY ACTIVE TASKS 
+app.get ('/todos/active', (req, res) => {
+  const active = todos.filter(todo => !todo.completed);
+  // const active = todos.filter(todo => todo.completed === false);
+  res.json(active); // Custom Read!
+});
+
+// ASSSIGNMENT QUESTION 1
+//  GET FOR ONE ID - Read
+app.get('/todos/:id', (req, res) => {
+  const todo = todos.find((t) => t.id === parseInt(req.params.id)); // Array.find()
+  if (!todo) return res.status(404).json({ message: 'Todo not found' });
+  res.status(200).json(todo); // Send object as JSON
+});
+
+
+
+
 // POST New – Create
 app.post('/todos', (req, res) => {
   const newTodo = { id: todos.length + 1, ...req.body }; // Auto-ID
+  if (!newTodo.task) {
+    return res.status(400).json({ error: 'Task is required' });                // QUESTION 2: Validation of task field required if not returned 400
+  }
   todos.push(newTodo);
   res.status(201).json(newTodo); // Echo back
 });
